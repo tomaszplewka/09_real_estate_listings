@@ -157,7 +157,7 @@ if (isset($_POST['submit-add'])) {
     // 
     if (!empty($_POST['author']) && !empty($_POST['price']) && !empty($_POST['address']) && !empty($_POST['city']) && isset($_POST['province']) && isset($_POST['beds']) && isset($_POST['baths']) && !empty($_POST['description']) && empty($errors)) {
         // 
-        $sql = "INSERT INTO real_estate_listings(price, address, city, province, beds, baths, front_img, description, author) VALUES('$price', '$address', '$city', '$province', '$beds', '$baths', '$image', '$description', '$author')";
+        $sql = "INSERT INTO listings_mysqli (price, address, city, province, beds, baths, front_img, description, author) VALUES('$price', '$address', '$city', '$province', '$beds', '$baths', '$image', '$description', '$author')";
         // 
         if (mysqli_query($conn, $sql)) {
             // 

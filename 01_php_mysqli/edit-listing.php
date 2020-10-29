@@ -166,7 +166,7 @@ if (isset($_POST['submit-edit'])) {
     // 
     if (!empty($_POST['author']) && !empty($_POST['price']) && !empty($_POST['address']) && !empty($_POST['city']) && isset($_POST['province']) && isset($_POST['beds']) && isset($_POST['baths']) && !empty($_POST['description']) && empty($errors)) {
         // 
-        $sql = "UPDATE real_estate_listings SET price = '$price', address = '$address', city = '$city', province = '$province', beds = '$beds', baths = '$baths', front_img = '$image', description = '$description', author = '$author' WHERE id = {$update_listing_id}";
+        $sql = "UPDATE listings_mysqli SET price = '$price', address = '$address', city = '$city', province = '$province', beds = '$beds', baths = '$baths', front_img = '$image', description = '$description', author = '$author' WHERE id = {$update_listing_id}";
         // 
         if (mysqli_query($conn, $sql)) {
             // 
@@ -183,7 +183,7 @@ if (isset($_POST['submit-edit'])) {
 } else {
     // 
     $id = mysqli_real_escape_string($conn, $_GET['id']);
-    $sql = "SELECT * FROM real_estate_listings WHERE id = $id";
+    $sql = "SELECT * FROM listings_mysqli WHERE id = $id";
     $result = mysqli_query($conn, $sql);
     $listing = mysqli_fetch_assoc($result);
     mysqli_free_result($result);

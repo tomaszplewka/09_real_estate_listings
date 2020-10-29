@@ -13,7 +13,7 @@ if (isset($_POST['submit-delete'])) {
     $key = array_search($delete, $_SESSION['visitedPages']);
     array_splice($_SESSION['visitedPages'], $key, 1);
     // 
-    $sql = "DELETE FROM real_estate_listings WHERE id = {$delete}";
+    $sql = "DELETE FROM listings_mysqli WHERE id = {$delete}";
     // 
     if (mysqli_query($conn, $sql)) {
         // 
@@ -28,7 +28,7 @@ if (isset($_POST['submit-delete'])) {
 } else {
     // 
     $id = mysqli_real_escape_string($conn, $_GET['id']);
-    $sql = "SELECT * FROM real_estate_listings WHERE id = $id";
+    $sql = "SELECT * FROM listings_mysqli WHERE id = $id";
     $result = mysqli_query($conn, $sql);
     $listing = mysqli_fetch_assoc($result);
     mysqli_free_result($result);

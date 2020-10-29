@@ -51,14 +51,14 @@ if (isset($_GET['all-search'])) {
     // 
     $limit = isset($_SESSION['records-limit']) ? $_SESSION['records-limit'] : 3;
     // 
-    $sqlQuery = "SELECT count(id) AS id FROM real_estate_listings";
+    $sqlQuery = "SELECT count(id) AS id FROM listings_mysqli";
     $seeAllListings = queryDatabase($sqlQuery, $conn);
     // 
     $totalPages = ceil($seeAllListings[0]['id'] / $limit);
     // 
     $paginationStart = ($page - 1) * $limit;
     // 
-    $sqlQuery = "SELECT * FROM real_estate_listings LIMIT {$paginationStart}, {$limit}";
+    $sqlQuery = "SELECT * FROM listings_mysqli LIMIT {$paginationStart}, {$limit}";
     $realEstateListings = queryDatabase($sqlQuery, $conn);
     // 
     $prev = $page - 1;
@@ -89,7 +89,7 @@ if (isset($_GET['all-search'])) {
         // 
         $paginationStart = ($page - 1) * $limit;
         // 
-        $sqlQuery = "SELECT * FROM real_estate_listings WHERE 1 = 1";
+        $sqlQuery = "SELECT * FROM listings_mysqli WHERE 1 = 1";
         // 
         foreach ($_SESSION['custom-search'] as $key => $value) {
             // 
@@ -153,7 +153,7 @@ if (basename($_SERVER['PHP_SELF'], '.php') === 'index' && empty(parse_url($_SERV
 // 
 if (isset($_POST['search-submit'])) {
     // 
-    $sqlQuery = "SELECT * FROM real_estate_listings ORDER BY created_at DESC";
+    $sqlQuery = "SELECT * FROM listings_mysqli ORDER BY created_at DESC";
     $seeAllListings = queryDatabase($sqlQuery, $conn);
     // 
     $formVisible = true;
@@ -263,7 +263,7 @@ if (isset($_POST['submit'])) {
     // 
 }
 // 
-$sqlQuery = "SELECT * FROM real_estate_listings ORDER BY created_at DESC LIMIT 3";
+$sqlQuery = "SELECT * FROM listings_mysqli ORDER BY created_at DESC LIMIT 3";
 $listings = queryDatabase($sqlQuery, $conn);
 // 
 if (isset($_SESSION['visitedPages']) && count($_SESSION['visitedPages'])) {
@@ -274,7 +274,7 @@ if (isset($_SESSION['visitedPages']) && count($_SESSION['visitedPages'])) {
     // 
     foreach ($array as $id) {
         // 
-        $sql = "SELECT * FROM real_estate_listings WHERE id = {$id}";
+        $sql = "SELECT * FROM listings_mysqli WHERE id = {$id}";
         $result = mysqli_query($conn, $sql);
         $listing = mysqli_fetch_assoc($result);
         array_push($recentlyViewedListings, $listing);
@@ -284,10 +284,10 @@ if (isset($_SESSION['visitedPages']) && count($_SESSION['visitedPages'])) {
     // 
 }
 // 
-$sqlQuery = "SELECT DISTINCT city FROM real_estate_listings ORDER BY city";
+$sqlQuery = "SELECT DISTINCT city FROM listings_mysqli ORDER BY city";
 $cities = queryDatabase($sqlQuery, $conn);
 // 
-$sqlQuery = "SELECT city, COUNT(city) AS countCity FROM `real_estate_listings` GROUP BY city ORDER BY countCity DESC LIMIT 3";
+$sqlQuery = "SELECT city, COUNT(city) AS countCity FROM `listings_mysqli` GROUP BY city ORDER BY countCity DESC LIMIT 3";
 $popularCities = queryDatabase($sqlQuery, $conn);
 // 
 mysqli_close($conn);
@@ -384,38 +384,46 @@ mysqli_close($conn);
     </div>
     <div class="container my-5 pt-3 pb-5 bg-custom-white border border-dark shadow-lg">
         <h2 class="h2 m-3">Popular Cities</h2>
-        <div class="row row-cols-1 row-cols-md-3 m-0 p-0">
-            <?php foreach ($recentlyViewedListings as $key => $recentlyViewedListing) : ?>
-                <div class="card-deck col m-0 p-0">
-                    <div class="card position-relative border-dark bg-custom-white text-white text-center m-0 mx-3 shadow-lg">
-                        <div id="popularCitiesCarousel" class="carousel slide carousel-fade position-relative" data-ride="carousel">
-                            <div id="showcase-main-heading" class="position-absolute d-flex flex-column justify-content-around align-items-center">
-                                <h4 class="display-4 text-white pt-4"><?php echo $popularCities[$key]['city']; ?></h4>
-                            </div>
-                            <div class="carousel-inner">
-                                <div class="carousel-item active" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
-                                    <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
+        <?php if ($popularCities) : ?>
+            <div class="row row-cols-1 row-cols-md-3 m-0 p-0">
+                <?php foreach ($popularCities as $popularCity) : ?>
+                    <div class="card-deck col m-0 p-0">
+                        <div class="card position-relative border-dark bg-custom-white text-white text-center m-0 mx-3 shadow-lg">
+                            <div id="popularCitiesCarousel" class="carousel slide carousel-fade position-relative" data-ride="carousel">
+                                <div id="showcase-main-heading" class="position-absolute d-flex flex-column justify-content-around align-items-center">
+                                    <h4 class="display-4 text-white pt-4"><?php echo $popularCity['city']; ?></h4>
                                 </div>
-                                <div class="carousel-item" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
-                                    <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
-                                </div>
-                                <div class="carousel-item" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
-                                    <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
+                                        <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
+                                    </div>
+                                    <div class="carousel-item" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
+                                        <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
+                                    </div>
+                                    <div class="carousel-item" data-interval="<?php echo $dataInterval[array_rand($dataInterval, 1)]; ?>">
+                                        <img src="<?php echo 'https://source.unsplash.com/400x400/?city,' . $photoTags[array_rand($photoTags, 1)]; ?>" class="d-block img-carousel" alt="...">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else : ?>
+            <p class="h4 text-dark text-center my-5">No Popular Cities to Display</p>
+        <?php endif; ?>
     </div>
     <div class="container my-5 pt-3 pb-5 bg-custom-secondary border border-dark shadow-lg">
         <h2 class="h2 m-3">Recently Added</h2>
 
-        <?php
-        $array = $listings;
-        include('templates/listing-card-deck.php');
-        ?>
+        <?php if ($listings) : ?>
+            <?php
+            $array = $listings;
+            include('templates/listing-card-deck.php');
+            ?>
+        <?php else : ?>
+            <p class="h4 text-dark text-center my-5">No Recently Added Listings</p>
+        <?php endif; ?>
 
     </div>
 <?php endif; ?>
